@@ -2,21 +2,41 @@
 use std::io::stdin;
 
 #[derive(Debug)]
+enum VisitorAction {
+    Accept,
+    AcceptWithNote { note: String },
+    Refuse,
+    Probation,
+}
+#[derive(Debug)]
 struct Visitor {
     name: String,
-    greeting: String,
+    action: VisitorAction,
+    age: i8,
 }
 
 impl Visitor {
-    fn new(name: &str, greeting: &str) -> Self {
+    fn new(name: &str, action: VisitorAction, age: i8) -> Self {
         Self {
             name: name.to_lowercase(),
-            greeting: greeting.to_string(),
+            action,
+            age,
         }
     }
 
     fn greet(&self) {
-        println!("{}", self.greeting);
+        match &self.action {
+            VisitorAction::Accept => println!("Welcome to the treehouse, {}!", self.name),
+            VisitorAction::AcceptWithNote { note } => {
+                println!("Welcome to the treehouse, {}!", self.name);
+                println!("{note}");
+                if self.age < 21 {
+                    println!("Do not serve alcohol to {}.", self.name);
+                }
+            }
+            VisitorAction::Probation => println!("{} is now a probationary member.", self.name),
+            VisitorAction::Refuse => println!("Sorry, {}. You're not welcome here.", self.name),
+        }
     }
 }
 
@@ -28,11 +48,15 @@ fn get_name() -> String {
 
 fn main() {
     let mut visitors = vec![
-        Visitor::new("anna", "You're the best!"),
-        Visitor::new("bob", "Missing Alice?"),
-        Visitor::new("charlie", "Don't be grumpy!"),
-        Visitor::new("david", "What's up David!"),
-        Visitor::new("emma", "Where's your mom?"),
+        Visitor::new(
+            "anna",
+            VisitorAction::AcceptWithNote {
+                note: String::from("You're the best!"),
+            },
+            20,
+        ),
+        Visitor::new("bob", VisitorAction::Accept, 33),
+        Visitor::new("charlie", VisitorAction::Refuse, 44),
     ];
 
     loop {
@@ -48,7 +72,7 @@ fn main() {
         }
 
         println!("{name} is not on the guest list.");
-        visitors.push(Visitor::new(&name, "New friend!"));
+        visitors.push(Visitor::new(&name, VisitorAction::Probation, 0));
     }
 
     println!("The final list of visitors:");
