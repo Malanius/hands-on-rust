@@ -38,18 +38,19 @@ fn main() {
     loop {
         println!("Hello, what's your name?");
         let name = get_name();
-        match visitors.iter().find(|visitor| visitor.name == name) {
-            Some(visitor) => visitor.greet(),
-            None => {
-                if name.is_empty() {
-                    break;
-                }
-                println!("{name} is not on the guest list.");
-                visitors.push(Visitor::new(&name, "New friend!"));
-            }
+        if let Some(visitor) = visitors.iter().find(|visitor| visitor.name == name) {
+            visitor.greet();
+            continue;
         }
+
+        if name.is_empty() {
+            break;
+        }
+
+        println!("{name} is not on the guest list.");
+        visitors.push(Visitor::new(&name, "New friend!"));
     }
 
     println!("The final list of visitors:");
-    println!{"{:#?}", visitors};
+    println!("{visitors:#?}");
 }
