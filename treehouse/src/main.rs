@@ -36,7 +36,7 @@ fn main() {
     ];
 
     loop {
-        println!("Hello, what's your name?");
+        println!("Hello, what's your name? (Leave empty and press ENTER to quit)");
         let name = get_name();
         if let Some(visitor) = visitors.iter().find(|visitor| visitor.name == name) {
             visitor.greet();
