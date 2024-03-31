@@ -14,6 +14,8 @@ struct Player {
 }
 
 impl Player {
+    const TERMINAL_VELOCITY: f32 = 2.0;
+    const FLAP_VELOCITY: f32 = -2.0;
     fn new(x: i32, y: i32) -> Self {
         Self {
             x,
@@ -25,15 +27,32 @@ impl Player {
     fn render(&mut self, ctx: &mut BTerm) {
         ctx.set(0, self.y, YELLOW, BLACK, to_cp437('@'));
     }
+
+    fn gravity_and_move(&mut self) {
+        if self.velocity < Self::TERMINAL_VELOCITY {
+            self.velocity += 0.2;
+        }
+
+        self.y += self.velocity as i32;
+        self.x += 1;
+    }
+
+    fn flap(&mut self) {
+        self.velocity = Self::FLAP_VELOCITY;
+    }
 }
 
 struct State {
+    player: Player,
+    frame_time: f32,
     mode: GameMode,
 }
 
 impl State {
     fn new() -> Self {
         Self {
+            player: Player::new(5, 25),
+            frame_time: 0.0,
             mode: GameMode::Menu,
         }
     }
@@ -59,6 +78,8 @@ impl State {
     }
 
     fn restart(&mut self) {
+        self.player = Player::new(5, 25);
+        self.frame_time = 0.0;
         self.mode = GameMode::Playing;
     }
 
