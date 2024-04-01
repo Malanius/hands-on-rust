@@ -46,6 +46,23 @@ impl Player {
     }
 }
 
+struct Obstacle {
+    x: i32,
+    gap_y: i32,
+    size: i32,
+}
+
+impl Obstacle {
+    fn new(x: i32, score: i32) -> Self {
+        let mut rng = RandomNumberGenerator::new();
+        Self {
+            x,
+            gap_y: rng.range(10, 40),
+            size: i32::max(2, 20 - score),
+        }
+    }
+}
+
 struct State {
     player: Player,
     frame_time: f32,
