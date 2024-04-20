@@ -9,17 +9,31 @@ pub struct MapBuilder {
 }
 
 impl MapBuilder {
+    pub fn new(rng: &mut RandomNumberGenerator) -> Self {
+        let mut mb = Self {
+            map: Map::new(),
+            rooms: Vec::new(),
+            player_start: Point::zero(),
+        };
+
+        mb.fill(TileType::Wall);
+        mb.build_random_rooms(rng);
+        mb.build_corridors(rng);
+        mb.player_start = mb.rooms[0].center();
+        mb
+    }
+
     fn fill(&mut self, tile: TileType) {
         self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
 
-    fn build_random_rooms(&mut self) {
+    fn build_random_rooms(&mut self, rng: &mut RandomNumberGenerator) {
         while self.rooms.len() < NUM_ROOMS {
             let room = Rect::with_size(
-                RandomNumberGenerator::new().range(1, SCREEN_WIDTH - 10),
-                RandomNumberGenerator::new().range(1, SCREEN_HEIGHT - 10),
-                RandomNumberGenerator::new().range(2, 10),
-                RandomNumberGenerator::new().range(2, 10),
+                rng.range(1, SCREEN_WIDTH - 10),
+                rng.range(1, SCREEN_HEIGHT - 10),
+                rng.range(2, 10),
+                rng.range(2, 10),
             );
             let mut overlap = false;
             for r in self.rooms.iter() {
