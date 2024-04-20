@@ -12,4 +12,30 @@ impl MapBuilder {
     fn fill(&mut self, tile: TileType) {
         self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
+
+    fn build_random_rooms(&mut self) {
+        while self.rooms.len() < NUM_ROOMS {
+            let room = Rect::with_size(
+                RandomNumberGenerator::new().range(1, SCREEN_WIDTH - 10),
+                RandomNumberGenerator::new().range(1, SCREEN_HEIGHT - 10),
+                RandomNumberGenerator::new().range(2, 10),
+                RandomNumberGenerator::new().range(2, 10),
+            );
+            let mut overlap = false;
+            for r in self.rooms.iter() {
+                if r.intersect(&room) {
+                    overlap = true;
+                }
+            }
+            if !overlap {
+                room.for_each(|p| {
+                    if p.x > 0 && p.x < SCREEN_WIDTH && p.y > 0 && p.y < SCREEN_HEIGHT {
+                        let idx = map_idx(p.x, p.y);
+                        self.map.tiles[idx] = TileType::Floor;
+                    }
+                });
+                self.rooms.push(room);
+            }
+        }
+    }
 }
