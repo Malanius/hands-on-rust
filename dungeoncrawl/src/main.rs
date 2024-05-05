@@ -1,8 +1,8 @@
 #![warn(clippy::all, clippy::pedantic)]
 mod camera;
+mod components;
 mod map;
 mod map_builder;
-mod components;
 mod spawner;
 mod systems;
 
@@ -16,9 +16,9 @@ mod prelude {
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
     pub use crate::camera::*;
+    pub use crate::components::*;
     pub use crate::map::*;
     pub use crate::map_builder::*;
-    pub use crate::components::*;
     pub use crate::spawner::*;
     pub use crate::systems::*;
 }
@@ -57,7 +57,8 @@ impl GameState for State {
 
         self.resources.insert(ctx.key);
         self.systems.execute(&mut self.ecs, &mut self.resources);
-        // TODO: Render draw buffer
+
+        render_draw_buffer(ctx).expect("Render error");
     }
 }
 
